@@ -96,4 +96,5 @@ Dpto = DPfo+Dpro
 #Pérdidas totales
 Dptotal = Dpti+Dpto
 print(Dptotal)
-print(Nhp)
+print(Nhp)  
+print(Lt)
