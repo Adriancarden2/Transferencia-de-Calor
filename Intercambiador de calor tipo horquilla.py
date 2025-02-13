@@ -1,4 +1,4 @@
-import numpy as npy
+import numpy as np
 import math as mt
 
 #Diseño de intercambiador de tubos concéntricos tipo horquilla
@@ -28,7 +28,7 @@ Rdc = 0.001 #h ft2 °F/Btu
 mh = mc*Cpc*(to-ti)/(Cph*(Ti-To))
 
 #Temperatura media logarítmica
-Tlm = ((Ti-to)-(To-ti))/(npy.log((Ti-to)/(To-ti)))
+Tlm = ((Ti-to)-(To-ti))/(np.log((Ti-to)/(To-ti)))
 
 #Parámetros del tubo
 L = 16 #ft
@@ -44,28 +44,44 @@ do = 2.375/12 #ft
 Di = 3.068/12 #ft
 
 #Cálculos térmicos
-Rei = (4*mc)/(npy.pi*di*muc*2.419)
-Afo = (npy.pi/4)*(Di**2-do**2) #ft2
+Rei = (4*mc)/(np.pi*di*muc*2.419)
+Afo = (np.pi/4)*(Di**2-do**2) #ft2
+
+
+
 
 De = (Di-do)
 Go = mh/Afo #lb/h ft2
 Reo = De*Go/(muh*2.419)
+RDe = Di/do
+
 
 #Cálculo de flujo
 def convective_interal(Re, Pr, K, D, L):
     if Re < 2100:
-        h = (K/D)*1.86*(Re*Pr*D/L)**(1/3)#Btu/h ft2 °F3
+        h = (K/D)*1.86*(Re*Pr*D/L)**(1/3)#Btu/h ft2 °F
     elif 10**4 > Re > 2100:
         h = (K/D)*0.116*(Re**(2/3)-125)*Pr**(1/3)*(1+(D/L)**(2/3)) #Btu/h ft2 °F
     else: Re > 10**4
     h = (K/D)*0.023*Re**0.8*Pr**(1/3) #Btu/h ft2 °F
     return h
-hi = convective_interal(Rei, Prh, kh, di, L)
-ho = convective_interal(Reo, Prc, kc, De, L)
-print(hi)
-print(ho)
+
+def convective_annulus(Re, Pr, K, D, L, RDe):
+    if Re < 2100:
+        h = (K/D)*3.66+1.2*(RDe)**0.8+(0.19*(1+0.14*(RDe)**0.5)*(Re*Pr*D/L)**0.8)/(1+0.117*(Re*Pr*D/L)**0.467)#Btu/h ft2 °F
+    elif 10**4 > Re > 2100:
+        h = (K/D)*0.116*(Re**(2/3)-125)*Pr**(1/3)*(1+(D/L)**(2/3)) #Btu/h ft2 °F
+    else: Re > 10**4
+    h = (K/D)*0.023*Re**0.8*Pr**(1/3) #Btu/h ft2 °F
+    return h
+hi = convective_interal(Rei, Prc, kc, di, L)
+ho = convective_annulus(Reo, Prh, kh, De, L, RDe)
+
+
 #Cálculo de coeficiente global
 Ud = ((do/(di*hi))+((do*npy.log(do/di))/(2*k))+(1/ho)+(do*Rdc/di)+Rdh)**-1
+print(f'El coeficiente global del intercambiador es: {Ud:.2f} Btu/h*ft2*°F')
+
 
 q = mc*Cpc*(to-ti)
 
@@ -93,8 +109,8 @@ Dpro = 1.6*10**-13*(2*Nhp-1)*(Go**2/sh)
 #Pérdidas internas totales
 Dpto = DPfo+Dpro
 
+
 #Pérdidas totales
 Dptotal = Dpti+Dpto
-print(Dptotal)
-print(Nhp)  
-print(Lt)
+
+print(f'Las caídas de presión son de: {Dptotal:.2f} psia')
