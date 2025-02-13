@@ -99,7 +99,7 @@ Afi = (npy.pi/4)*(di**2) #ft2
 Gi = mc/Afi #lb/h ft2
 DPfi = (fi*Lt*Gi**2)/(7.5*10**12*di*sc)
 Dpri = 1.6*10**-13*(2*Nhp-1)*(Gi**2/sc)
-print(f'El número de pasos de flujo es: {Nhp}')
+
 
 #Pérdidas internas totales
 Dpti = DPfi+Dpri
