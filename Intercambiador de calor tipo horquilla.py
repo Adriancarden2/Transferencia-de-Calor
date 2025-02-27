@@ -54,9 +54,7 @@ else:
   print('El flujo interno del intercambiador es de régimen turbulento')
 Afo = (np.pi/4)*(Di**2-do**2) #ft2
 
-
-
-
+#Cálculo de flujo anular
 De = (Di-do)
 Go = mh/Afo #lb/h ft2
 Reo = De*Go/(muh*2.419)
@@ -66,6 +64,7 @@ elif 10**4 > Reo > 2100:
   print('El flujo anular del intercambiador es de régimen transitorio')
 else: 
   print('El flujo anular del intercambiador es de régimen turbulento')
+
 RDe = Di/do
 
 
@@ -87,7 +86,10 @@ def convective_annulus(Re, Pr, K, D, L, RDe):
     else:
         h = (K/D)*0.023*Re**0.8*Pr**(1/3) #Btu/h ft2 °F
     return h
+
+
 hi = convective_interal(Rei, Prc, kc, di, L)
+
 ho = convective_annulus(Reo, Prh, kh, De, L, RDe)
 
 
@@ -128,3 +130,25 @@ Dpto = DPfo+Dpro
 Dptotal = Dpti+Dpto
 
 print(f'Las caídas de presión son de: {Dptotal:.2f} psia')
+
+
+
+def F_general(R, x, P):
+  if R==1:
+    numerator = P * (1 - x)
+    denominator = x * (1 - P) * np.log(((1 - x) / ((1 - P) ** (1/x))) + x)
+    return numerator / denominator
+  else:
+    numerator = (R - x) * np.log((1 - P) / (1 - P * R))
+    denominator = x * (R-1) * np.log(((R - x) / (R * (1 - P * R) ** (1/x))) + (x / R))
+    return numerator / denominator
+
+P = (Ti-To)/(To-ti)
+print(P)
+R = (to-ti)/(Ti-To)
+print(R)
+x = 2
+Y = R*P
+print(Y)
+#F = F_general(R, x, P)
+#print(F)
